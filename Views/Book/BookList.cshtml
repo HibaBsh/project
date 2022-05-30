@@ -1,0 +1,195 @@
+﻿
+@{
+    Layout = "~/Views/Shared/LayoutPage.cshtml";
+}
+@model vmBook
+
+@section Head {
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".edit").click(function () {
+            var id = $(this).parents().eq(3).find(".id").text()
+            $.ajax({
+                type: 'get',
+                url: '/BookManagement/Book/Edit?ID=' + id,
+                success: function (data) {
+                    debugger;
+                    $("#btitle").val(data.title);
+                    $("#byear").val(data.year);
+                    $("#pyear").val(data.price);
+                    $("#catid").val(data.category_ID);
+                    $("#authid").val(data.authors_ID);
+                    $("#bstock").val(data.stock);
+                    $("#bid").val(data.id);
+                    $("#bimg").val(data.imagepath);
+
+                },
+                error: function () {
+                    alert("Error")
+                }
+
+
+            });
+            $("#staticBackdrop").modal("show");
+            $("#save").hide();
+            $("#update").show();
+
+        });
+        $("#new").click(function () {
+            $("#btitle").val("");
+            $("#byear").val("");
+            $("#pyear").val("");
+            $("#catid").val("");
+            $("#authid").val("");
+            $("#bstock").val("");
+            $("#bid").val("");
+            $("#bimg").val("");
+            $("#staticBackdrop").modal("show");
+            $("#save").show();
+            $("#update").hide();
+        });
+    });
+</script>
+}
+ 
+@section Body
+{
+    <form method="post" enctype="multipart/form-data">
+        <!-- Button trigger modal -->
+        <button type="button" style="margin-left:700px" class="btn btn-primary" id="new">
+            New Book
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="staticBackdrop" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="staticBackdropLabel">Add Book</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
+</svg></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <span>Book Title </span>
+                                <input type="text" style="border: 1px solid " placeholder="Book Title" class="form-control" id="btitle" asp-for="books.Title" />
+                                <span asp-validation-for="books.Title"></span>
+                                <input type="hidden" asp-for="books.ID" id="bid" />
+                                <input type="hidden" asp-for="books.Imagepath" id="bimg" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <span>Year </span>
+                                <input type="text" style="border: 1px solid " placeholder="Year" class="form-control" id="byear" asp-for="books.Year" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <span>Price </span>
+                                <input type="text" style="border: 1px solid" placeholder="Price" class="form-control" id="pyear" asp-for="books.Price" />
+                                <span asp-validation-for="books.Price"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <span>Category</span>
+                                <select class="form-control" style="border: 1px solid" id="catid" asp-items='new SelectList(Model.licat,"ID","Name")' asp-for="books.category_ID">
+                                    
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <span>Author</span>
+                                <select class="form-control"style="border: 1px solid "  id="authid" asp-items='new SelectList(Model.liauthor,"ID","Fname")' asp-for="books.authors_ID">
+                                    
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-4" style="margin-top: 4px">
+                                <input type="file" asp-for="books.Image" id="fu1" style="display:none;" />
+                                <label class="btn btn-primary" for="fu1">Cover Photo</label>
+
+                            </div>
+                            </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <span>Stock </span>
+
+                                <input type="text" style="border: 1px solid "  placeholder="Stock" class="form-control" id="bstock" asp-for="books.Stock" />
+                                <span asp-validation-for="books.Stock"></span>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="modal-footer">
+
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" id="save" asp-action="Save">Add Book</button>
+                            <button type="submit" class="btn btn-primary" id="update" asp-action="Update">Update</button>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+                    
+        <div class="container">
+            <div class="row">
+                <div class="col-md-offset-1 col-md-10">
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col col-lg-1 col-lg-12">
+                                    <h3 class="title">Data <span>List</span></h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-body table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Cover</th>
+                                        <th>Book Title</th>
+                                        <th>Year</th>
+                                        <th>Price</th>
+                                        <th>Category</th>
+                                        <th>Author</th>
+                                        <th>Stock</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (Books item in Model.libook)
+                                    {
+                                        <tr>
+                                            <td class="id">@item.ID</td>
+                                            <td><img src='@item.Imagepath' style="width:50px ;height:70px" /></td>
+                                            <td>@item.Title</td>
+                                            <td>@item.Year</td>
+                                            <td>@item.Price$</td>
+                                            <td>@item.category.Name</td>
+                                            <td>@item.authors.Fname</td>
+                                            <td>@item.Stock</td>
+                                            <td>
+                                                <ul class="action-list" style=" list-style-type: none;">
+                                                    <li><a class="edit" data-tip="edit"><i class="fa fa-edit"></i></a></li>
+                                                    <li><a asp-action="Delete" asp-route-Id="@item.ID" data-tip="delete"><i class="fa fa-trash"></i></a></li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    }
+
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+}

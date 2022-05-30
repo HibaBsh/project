@@ -1,0 +1,158 @@
+﻿
+@{
+    Layout = "~/Views/Shared/LayoutPage.cshtml";
+}
+@model vmAuthor
+
+@section Head {
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".edit").click(function () {
+            var id = $(this).parents().eq(3).find(".id").text()
+            $.ajax({
+                type: 'get',
+                url: '/BookManagement/Author/Edit?ID=' + id,
+                success: function (data) {
+                    debugger;
+                    $("#Fname").val(data.fname);
+                    $("#Lname").val(data.lname);
+                    $("#aNation").val(data.nationality_ID);
+                    $("#bid").val(data.id);
+                    $("#bimg").val(data.imagepath);
+
+                },
+                error: function () {
+                    alert("Error")
+                }
+
+
+            });
+            $("#staticBackdrop").modal("show");
+            $("#save").hide();
+            $("#update").show();
+
+        });
+        $("#new").click(function () {
+            $("#Fname").val("");
+            $("#Lname").val("");
+            $("#aNation").val("");
+            $("#bid").val("");
+            $("#bimg").val("");
+            $("#staticBackdrop").modal("show");
+            $("#save").show();
+            $("#update").hide();
+        })
+    })
+</script>
+}
+@section Body
+{
+    <form method="post" enctype="multipart/form-data">
+        <!-- Button trigger modal -->
+        <button type="button" style="margin-left:700px" class="btn btn-primary" id="new">
+            New Author
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="staticBackdrop"  data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="staticBackdropLabel">Add Author</h5>
+                        <button type="button" data-bs-dismiss="modal" aria-label="Close"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
+</svg></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <label for="Fname">First Name </label>
+                                <input type="text" class="form-control" style="border: 1px solid #6f42c1" placeholder="First Name" id="Fname" asp-for="author.Fname" />
+                                <span asp-validation-for="author.Fname"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <label for="Lname">Last Name </label>
+                                <input type="text" class="form-control" style="border: 1px solid #6f42c1" placeholder="Last Name" id="Lname" asp-for="author.Lname" />
+                                <span asp-validation-for="author.Lname"></span>
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <label for="Lname">Category </label>
+                                <select class="form-control" style="border: 1px solid #6f42c1" id="aNation" asp-items='new SelectList(Model.linationality,"ID","Name")' asp-for="author.nationality_ID">
+                                    <option value="0">Select Nationality</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-offset-1 col-lg-5" style="margin-top:4px">
+                                <input type="file" asp-for="author.Image" id="fu1" style="display:none" />
+                                <label class="btn btn-primary" for="fu1">Choose Image</label>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" id="save" asp-action="Save">Add Author</button>
+                        <button type="submit" class="btn btn-primary" id="update" asp-action="Update">Update</button>
+                        <input type="hidden" asp-for="author.ID" id="bid" />
+                        <input type="hidden" asp-for="author.Imagepath" id="bimg" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-offset-1 col-md-10">
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col col-lg-1 col-lg-12">
+                                    <h3 class="title">Data <span>List</span></h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-body table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
+                                        <th>Image</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (Authors item in Model.liauthor)
+                                    {
+                                        <tr>
+                                            <td class="id">@item.ID</td>
+                                            <td>@item.Fname</td>
+                                            <td>@item.Lname</td>
+                                            <td><img src='@item.Imagepath' style="width:70px ;height:70px" /></td>
+                                            <td>
+                                                <ul class="action-list" style=" list-style-type: none;">
+                                                    <li><a class="edit" data-tip="edit"><i class="fa fa-edit"></i></a></li>
+                                                    <li><a asp-action="Delete" asp-route-Id="@item.ID" data-tip="delete"><i class="fa fa-trash"></i></a></li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    }
+
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        </form>
+}

@@ -1,0 +1,8 @@
+{
+  "runtimeOptions": {
+    "additionalProbingPaths": [
+      "C:\\Users\\hibab\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\hibab\\.nuget\\packages"
+    ]
+  }
+}
